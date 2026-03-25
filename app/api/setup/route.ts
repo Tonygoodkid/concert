@@ -55,6 +55,32 @@ export async function GET() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS app_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT
+      )
+    `;
+
+    // Seed default settings if empty
+    const defaultSettings = [
+      { key: 'qr_code_url', value: '/images/payment_qr.png' },
+      { key: 'price_7_shared', value: '150000' },
+      { key: 'price_7_private', value: '1000000' },
+      { key: 'price_16_shared', value: '120000' },
+      { key: 'price_16_private', value: '1800000' },
+      { key: 'price_29_shared', value: '100000' },
+      { key: 'price_29_private', value: '3200000' }
+    ];
+
+    for (const setting of defaultSettings) {
+      await sql`
+        INSERT INTO app_settings (key, value)
+        VALUES (${setting.key}, ${setting.value})
+        ON CONFLICT (key) DO NOTHING
+      `;
+    }
+
     return NextResponse.json({ success: true, message: 'Database initialized successfully!' });
   } catch (error: any) {
     console.error('Setup error:', error);

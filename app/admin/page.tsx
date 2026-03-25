@@ -15,7 +15,8 @@ import {
   Clock,
   ChevronRight,
   RefreshCcw,
-  FileText
+  FileText,
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
@@ -64,10 +65,41 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [activeTab, setActiveTab] = useState("bookings");
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   useEffect(() => {
     fetchBookings();
+    fetchSettings();
   }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch("/api/settings");
+      const data = await res.json();
+      setSettings(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingSettings(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
+      if (res.ok) alert("Lưu cài đặt thành công!");
+    } catch (err) {
+      alert("Lỗi khi lưu cài đặt.");
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -121,10 +153,24 @@ export default function AdminDashboard() {
         </div>
         
         <nav className="space-y-2">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-bold transition-all">
+          <button 
+            onClick={() => setActiveTab("bookings")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all",
+              activeTab === "bookings" ? "bg-primary/10 text-primary" : "text-gray-400 hover:bg-white/5 hover:text-white"
+            )}
+          >
             <FileText className="h-5 w-5" /> Đơn đặt xe
           </button>
-          {/* Add more nav items here if needed */}
+          <button 
+            onClick={() => setActiveTab("settings")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all",
+              activeTab === "settings" ? "bg-primary/10 text-primary" : "text-gray-400 hover:bg-white/5 hover:text-white"
+            )}
+          >
+            <Settings className="h-5 w-5" /> Cài đặt
+          </button>
         </nav>
 
         <div className="mt-auto p-4 rounded-2xl bg-white/5 border border-white/10">
@@ -136,15 +182,19 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="h-16 border-b border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-between px-8">
-            <h1 className="text-xl font-bold">Danh sách yêu cầu đặt xe</h1>
-            <div className="flex items-center gap-4">
-                <Button variant="ghost" size="sm" onClick={fetchBookings} disabled={loading}>
-                    <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Làm mới
-                </Button>
-            </div>
+        <header className="h-16 border-b border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-between px-8 shrink-0">
+            <h1 className="text-xl font-bold">{activeTab === "bookings" ? "Danh sách yêu cầu đặt xe" : "Cài đặt hệ thống"}</h1>
+            {activeTab === "bookings" && (
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" onClick={fetchBookings} disabled={loading}>
+                        <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Làm mới
+                    </Button>
+                </div>
+            )}
         </header>
 
+        {activeTab === "bookings" ? (
+          <>
         {/* Toolbar */}
         <div className="p-8 pb-4 flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
@@ -337,6 +387,91 @@ export default function AdminDashboard() {
                 </div>
             </div>
         </div>
+          </>
+        ) : (
+          <div className="flex-1 overflow-auto p-8">
+             <form onSubmit={handleSaveSettings} className="max-w-4xl mx-auto space-y-8">
+                <Card className="border-[#1a1a1a] bg-[#0a0a0a]">
+                  <CardHeader className="border-b border-[#1a1a1a]">
+                    <CardTitle className="text-lg text-primary">Biểu phí xe ghép (1 chiều)</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Input 
+                      label="Xe 7 chỗ (VNĐ)" 
+                      type="number" 
+                      value={settings.price_7_shared || ""} 
+                      onChange={(e) => setSettings({...settings, price_7_shared: e.target.value})} 
+                    />
+                    <Input 
+                      label="Xe 16 chỗ (VNĐ)" 
+                      type="number" 
+                      value={settings.price_16_shared || ""} 
+                      onChange={(e) => setSettings({...settings, price_16_shared: e.target.value})} 
+                    />
+                    <Input 
+                      label="Xe 29 chỗ (VNĐ)" 
+                      type="number" 
+                      value={settings.price_29_shared || ""} 
+                      onChange={(e) => setSettings({...settings, price_29_shared: e.target.value})} 
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card className="border-[#1a1a1a] bg-[#0a0a0a]">
+                  <CardHeader className="border-b border-[#1a1a1a]">
+                    <CardTitle className="text-lg text-primary">Biểu phí bao xe (1 chiều)</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Input 
+                      label="Xe 7 chỗ (VNĐ)" 
+                      type="number" 
+                      value={settings.price_7_private || ""} 
+                      onChange={(e) => setSettings({...settings, price_7_private: e.target.value})} 
+                    />
+                    <Input 
+                      label="Xe 16 chỗ (VNĐ)" 
+                      type="number" 
+                      value={settings.price_16_private || ""} 
+                      onChange={(e) => setSettings({...settings, price_16_private: e.target.value})} 
+                    />
+                    <Input 
+                      label="Xe 29 chỗ (VNĐ)" 
+                      type="number" 
+                      value={settings.price_29_private || ""} 
+                      onChange={(e) => setSettings({...settings, price_29_private: e.target.value})} 
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card className="border-[#1a1a1a] bg-[#0a0a0a]">
+                  <CardHeader className="border-b border-[#1a1a1a]">
+                    <CardTitle className="text-lg text-primary">Thông tin thanh toán</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <Input 
+                      label="Link ảnh QR Code" 
+                      type="text" 
+                      placeholder="VD: /images/payment_qr.png hoặc URL trực tiếp"
+                      value={settings.qr_code_url || ""} 
+                      onChange={(e) => setSettings({...settings, qr_code_url: e.target.value})} 
+                    />
+                    {settings.qr_code_url && (
+                       <div className="mt-4 p-4 border border-[#1a1a1a] rounded-xl flex justify-center bg-white/5">
+                         {/* eslint-disable-next-line @next/next/no-img-element */}
+                         <img src={settings.qr_code_url} alt="QR Preview" className="max-h-[200px] rounded-lg" />
+                       </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <div className="flex justify-end pt-4">
+                  <Button type="submit" size="lg" disabled={isSavingSettings} className="w-full sm:w-auto px-12">
+                     {isSavingSettings ? "Đang lưu..." : "Lưu cài đặt"}
+                  </Button>
+                </div>
+             </form>
+          </div>
+        )}
       </main>
     </div>
   );

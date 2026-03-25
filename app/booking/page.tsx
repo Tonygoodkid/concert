@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Music, ArrowLeft, Send, CheckCircle2, Info, Users, Car, MapPin, HelpCircle, Upload, Wallet, ReceiptText } from "lucide-react";
@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 
-// Pricing configuration (1-way prices)
-const PRICES = {
+const DEFAULT_PRICES = {
   "xe 7 chỗ": { shared: 150000, private: 1000000 },
   "Xe 16 chỗ": { shared: 120000, private: 1800000 },
   "Xe 29 chỗ": { shared: 100000, private: 3200000 },
@@ -21,6 +20,43 @@ export default function BookingPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  
+  const [prices, setPrices] = useState(DEFAULT_PRICES);
+  const [qrCodeUrl, setQrCodeUrl] = useState("/images/payment_qr.png");
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/settings");
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (data.qr_code_url) setQrCodeUrl(data.qr_code_url);
+            setPrices({
+              "xe 7 chỗ": { 
+                 shared: Number(data.price_7_shared) || DEFAULT_PRICES["xe 7 chỗ"].shared, 
+                 private: Number(data.price_7_private) || DEFAULT_PRICES["xe 7 chỗ"].private 
+              },
+              "Xe 16 chỗ": { 
+                 shared: Number(data.price_16_shared) || DEFAULT_PRICES["Xe 16 chỗ"].shared, 
+                 private: Number(data.price_16_private) || DEFAULT_PRICES["Xe 16 chỗ"].private 
+              },
+              "Xe 29 chỗ": { 
+                 shared: Number(data.price_29_shared) || DEFAULT_PRICES["Xe 29 chỗ"].shared, 
+                 private: Number(data.price_29_private) || DEFAULT_PRICES["Xe 29 chỗ"].private 
+              },
+            });
+          }
+        }
+      } catch(err) {
+        console.error(err);
+      } finally {
+        setIsLoadingSettings(false);
+      }
+    };
+    fetchSettings();
+  }, []);
   
   const [formData, setFormData] = useState({
     customer_name: "",
@@ -51,9 +87,8 @@ export default function BookingPage() {
     }
   };
 
-  // Calculate Total Amount
   const totalAmount = useMemo(() => {
-    const carTypePrices = PRICES[formData.car_type as keyof typeof PRICES];
+    const carTypePrices = prices[formData.car_type as keyof typeof prices];
     let basePrice = 0;
     
     if (formData.service_type === "Xe ghép") {
@@ -65,7 +100,7 @@ export default function BookingPage() {
     // Apply multiplier based on needs (1 chiều = 1x, 2 chiều = 2x)
     const multiplier = formData.needs === "2 chiều" ? 2 : 1;
     return Math.round(basePrice * multiplier);
-  }, [formData.car_type, formData.service_type, formData.passengers, formData.needs]);
+  }, [formData.car_type, formData.service_type, formData.passengers, formData.needs, prices]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -324,11 +359,15 @@ export default function BookingPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/30">
-                      {Object.entries(PRICES).map(([type, price]) => (
+                      {Object.entries(prices).map(([type, price]) => (
                         <tr key={type} className={`hover:bg-white/5 transition-colors ${formData.car_type === type ? "bg-primary/5" : ""}`}>
                           <td className="px-4 py-4 font-bold">{type}</td>
-                          <td className="px-4 py-4 text-center text-gray-300">{formatCurrency(price.shared)}</td>
-                          <td className="px-4 py-4 text-center text-gray-300">{formatCurrency(price.private)}</td>
+                          <td className="px-4 py-4 text-center text-gray-300">
+                            {isLoadingSettings ? <div className="h-4 bg-white/10 rounded animate-pulse w-20 mx-auto"></div> : formatCurrency(price.shared)}
+                          </td>
+                          <td className="px-4 py-4 text-center text-gray-300">
+                            {isLoadingSettings ? <div className="h-4 bg-white/10 rounded animate-pulse w-20 mx-auto"></div> : formatCurrency(price.private)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -354,12 +393,15 @@ export default function BookingPage() {
                     <div className="space-y-4 p-4 rounded-3xl bg-white/5 border border-white/10">
                       <p className="text-xs text-center text-gray-400 italic">Quét mã QR để thanh toán nhanh qua ứng dụng ngân hàng</p>
                       <div className="relative aspect-square max-w-[240px] mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white/5 p-2 bg-white">
-                        <Image 
-                          src="/images/payment_qr.png" 
-                          alt="Payment QR" 
-                          fill 
-                          className="object-contain"
-                        />
+                        {isLoadingSettings ? (
+                           <div className="absolute inset-0 bg-white/5 animate-pulse rounded-3xl"></div>
+                        ) : (
+                           <img 
+                             src={qrCodeUrl} 
+                             alt="Payment QR" 
+                             className="w-full h-full object-contain absolute inset-0 p-2"
+                           />
+                        )}
                       </div>
                     </div>
                   </div>
