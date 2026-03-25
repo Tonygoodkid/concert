@@ -16,7 +16,8 @@ import {
   ChevronRight,
   RefreshCcw,
   FileText,
-  Settings
+  Settings,
+  Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
@@ -68,15 +69,39 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("bookings");
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authDetails, setAuthDetails] = useState({ username: "", password: "" });
+  const [authError, setAuthError] = useState("");
+
+  const getHeaders = () => ({
+    "Content-Type": "application/json",
+    "x-admin-token": typeof window !== "undefined" ? localStorage.getItem("adminToken") || "" : ""
+  });
 
   useEffect(() => {
-    fetchBookings();
-    fetchSettings();
+    if (localStorage.getItem("adminToken") === "ATVNCG2024") {
+       setIsAuthenticated(true);
+       fetchBookings();
+       fetchSettings();
+    }
   }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authDetails.username === "admin" && authDetails.password === "ATVNCG2024") {
+      localStorage.setItem("adminToken", "ATVNCG2024");
+      setIsAuthenticated(true);
+      setAuthError("");
+      fetchBookings();
+      fetchSettings();
+    } else {
+      setAuthError("Tài khoản hoặc mật khẩu không đúng.");
+    }
+  };
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch("/api/settings");
+      const res = await fetch("/api/settings", { headers: getHeaders() });
       const data = await res.json();
       setSettings(data);
     } catch (err) {
@@ -90,7 +115,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch("/api/settings", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: getHeaders(),
         body: JSON.stringify(settings),
       });
       if (res.ok) alert("Lưu cài đặt thành công!");
@@ -104,7 +129,7 @@ export default function AdminDashboard() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/bookings");
+      const res = await fetch("/api/bookings", { headers: getHeaders() });
       const data = await res.json();
       setBookings(data);
     } catch (error) {
@@ -119,7 +144,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`/api/bookings/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: getHeaders(),
         body: JSON.stringify(updates),
       });
       if (res.ok) {
@@ -142,6 +167,40 @@ export default function AdminDashboard() {
     const matchesStatus = statusFilter === "all" || b.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6 font-sans">
+        <Card className="w-full max-w-sm bg-[#0a0a0a] border-[#1a1a1a] shadow-2xl">
+          <CardHeader className="space-y-2 text-center border-b border-[#1a1a1a] pb-6">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2 border border-primary/20">
+              <Lock className="h-8 w-8 text-primary" />
+            </div>
+            <CardTitle className="text-2xl font-black tracking-tight">ĐĂNG NHẬP ADMIN</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-8">
+            <form onSubmit={handleLogin} className="space-y-4">
+              <Input 
+                label="Tài khoản" 
+                value={authDetails.username} 
+                onChange={(e) => setAuthDetails({...authDetails, username: e.target.value})} 
+                required 
+              />
+              <Input 
+                label="Mật khẩu" 
+                type="password"
+                value={authDetails.password} 
+                onChange={(e) => setAuthDetails({...authDetails, password: e.target.value})} 
+                required 
+              />
+              {authError && <p className="text-red-500 text-sm font-bold text-center mt-2">{authError}</p>}
+              <Button type="submit" className="w-full mt-8" size="lg">Đăng nhập</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#050505] text-white flex">

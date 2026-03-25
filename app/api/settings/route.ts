@@ -47,6 +47,11 @@ export async function GET() {
 
 export async function PUT(req: Request) {
   try {
+    const adminToken = req.headers.get("x-admin-token");
+    if (adminToken !== "ATVNCG2024") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     
     for (const [key, value] of Object.entries(body)) {

@@ -2,12 +2,18 @@ import { NextResponse } from 'next/server';
 import db from '@/lib/db';
 
 export async function PATCH(
-  request: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
-    const body = await request.json();
+    const adminToken = req.headers.get("x-admin-token");
+    if (adminToken !== "ATVNCG2024") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
+    const body = await req.json();
     const { status, internal_notes } = body;
 
     if (status) {
