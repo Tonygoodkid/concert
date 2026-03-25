@@ -140,12 +140,12 @@ export default function BookingPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-background text-white flex flex-col items-center justify-center p-6 text-center animate-fade-in font-sans">
-        <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-8 border-2 border-primary animate-bounce-subtle">
-          <CheckCircle2 className="h-12 w-12 text-primary" />
+        <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-8 border-2 border-green-500 animate-bounce-subtle">
+          <CheckCircle2 className="h-12 w-12 text-green-500" />
         </div>
         <h1 className="text-3xl font-bold mb-4">Đặt chỗ thành công!</h1>
         <p className="text-gray-400 max-w-sm mb-12 leading-relaxed">
-          Cảm ơn bạn đã tin tưởng Concert Go. Bọn mình đã nhận được thông tin và minh chứng chuyển khoản. Tài xế sẽ chủ động liên hệ với bạn qua <span className="text-white font-bold">{formData.contact_method}</span> trước ngày khởi hành.
+          Cảm ơn các đồng gai đã tin tưởng bọn mình. Chúng tớ đã nhận được thông tin đơn hàng và ảnh thanh toán. Thông tin sẽ được xác nhận và được cập nhật trạng thái đơn hàng tại trang chủ mục Tra cứu đơn. Bạn sẽ được thêm vào group xe Zalo trước ngày khởi hành.
         </p>
         <div className="flex flex-col w-full gap-4 max-w-xs">
           <Button onClick={() => setSuccess(false)} variant="outline">Đặt thêm cho bạn bè</Button>
@@ -409,7 +409,7 @@ export default function BookingPage() {
                   <div className="space-y-6">
                     <div className="space-y-4">
                       <label className="block text-sm font-black text-gray-300 uppercase tracking-wide">
-                        <ReceiptText className="h-4 w-4 inline mr-2 text-primary" /> Minh chứng thanh toán *
+                        <ReceiptText className="h-4 w-4 inline mr-2 text-primary" /> Hình ảnh chuyển khoản *
                       </label>
                       <div className={`relative border-2 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center transition-all ${
                         receiptFile ? "border-green-500 bg-green-500/5" : "border-border/50 hover:border-primary/50 cursor-pointer"
