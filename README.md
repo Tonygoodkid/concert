@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Concert Go - Dịch vụ đặt xe Concert
 
-## Getting Started
+Ứng dụng web đặt xe đưa đón concert chuyên nghiệp (Mobile-first).
 
-First, run the development server:
+## Công nghệ sử dụng
+- **Frontend**: Next.js 14, React, Tailwind CSS, Lucide Icons.
+- **Backend**: Next.js Route Handlers.
+- **Database**: SQLite (`better-sqlite3`).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Cấu trúc thư mục
+- `/app`: Chứa các trang (Landing, Booking, Admin) và API.
+- `/components`: Chứa các UI components và Layout.
+- `/lib`: Chứa khởi tạo Database và tiện ích.
+- `/public/images`: Chứa ảnh concert và branding.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Cài đặt và Chạy local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Cài đặt dependencies**:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Seed dữ liệu mẫu**:
+   ```bash
+   npx tsx lib/seed.ts
+   ```
 
-## Learn More
+3. **Chạy môi trường development**:
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Truy cập**:
+   - Trang chủ & Đặt xe: `http://localhost:3000`
+   - Quản trị viên (Admin): `http://localhost:3000/admin`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Các tính năng chính
+- Landing page tối ưu chuyển đổi, hình ảnh sắc nét.
+- Form đặt xe chuẩn mobile, hỗ trợ nhiều tùy chọn (Zalo, SĐT, loại xe).
+- Dashboard quản trị: Quản lý lead, đổi trạng thái (pipeline), ghi chú nội bộ.
+- Database SQLite duy nhất, dễ dàng deploy và backup.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Ghi chú cho Operator
+- Đây là mô hình Lead Generation: Bạn nhận yêu cầu -> Liên hệ khách -> Chốt giá -> Bố trí xe thủ công.
+- Không có hệ thống Driver hay Marketplace tự động để giữ cho quy trình tinh gọn và hiệu quả.
