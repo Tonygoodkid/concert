@@ -118,8 +118,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
             <div className="hidden md:block absolute top-1/2 left-1/4 right-1/4 h-0.5 bg-dashed border-t-2 border-dashed border-white/20 -translate-y-8"></div>
             {[
-              { step: "01", title: "Gửi thông tin", desc: "Hoàn thành form đặt xe đơn giản chỉ trong 1 phút." },
-              { step: "02", title: "Nhận báo giá", desc: "Đội ngũ sẽ liên hệ xác nhận và báo giá qua Zalo/SĐT ngay." },
+              { step: "01", title: "Điền thông tin", desc: "Hoàn thành form đặt xe đơn giản chỉ trong 1 phút." },
+              { step: "02", title: "Thanh toán", desc: "Hoàn thành thanh toán và gửi lại ảnh thanh toán để hoàn thiện đơn" },
               { step: "03", title: "Đi concert", desc: "Bác tài đón bạn đúng giờ, chỉ việc ngồi lên xe và đi quẩy!" }
             ].map((step, i) => (
               <div key={i} className="relative z-10 space-y-4 bg-background p-6">
