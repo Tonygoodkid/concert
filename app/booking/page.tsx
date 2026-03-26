@@ -237,7 +237,9 @@ export default function BookingPage() {
           Cảm ơn các đồng gai đã tin tưởng bọn mình. Chúng tớ đã nhận được thông tin đơn hàng và ảnh thanh toán. Thông tin sẽ được xác nhận và được cập nhật trạng thái đơn hàng tại trang chủ mục Tra cứu đơn. Bạn sẽ được thêm vào group xe Zalo trước ngày khởi hành.
         </p>
         <div className="flex flex-col w-full gap-4 max-w-xs">
-          <Button onClick={() => setSuccess(false)} variant="outline">Đặt thêm cho bạn bè</Button>
+          <Link href="/tracking">
+            <Button variant="outline" className="w-full">Tra cứu đơn hàng</Button>
+          </Link>
           <Link href="/">
             <Button className="w-full">Quay lại trang chủ</Button>
           </Link>
