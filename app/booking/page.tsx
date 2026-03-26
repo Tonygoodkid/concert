@@ -37,11 +37,11 @@ export default function BookingPage() {
         if (res.ok) {
           const data = await res.json();
           if (data) {
-            if (data.bank_id && data.bank_account_no && data.bank_account_name) {
+            if (data.bank_id && data.bank_account_no) {
               setBankSettings({
-                id: data.bank_id,
-                no: data.bank_account_no,
-                name: data.bank_account_name,
+                id: data.bank_id.trim(),
+                no: data.bank_account_no.trim(),
+                name: data.bank_account_name ? data.bank_account_name.trim() : "",
               });
             }
             if (data.qr_code_url) setQrCodeUrl(data.qr_code_url);
@@ -153,7 +153,7 @@ export default function BookingPage() {
   const transferContent = formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`;
   
   const dynamicQrUrl = bankSettings 
-    ? `https://img.vietqr.io/image/${bankSettings.id}-${bankSettings.no}-compact2.png?amount=${totalAmount}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bankSettings.name)}`
+    ? `https://img.vietqr.io/image/${bankSettings.id}-${bankSettings.no}-compact2.png?amount=${totalAmount}&addInfo=${encodeURIComponent(transferContent)}` + (bankSettings.name ? `&accountName=${encodeURIComponent(bankSettings.name)}` : '')
     : qrCodeUrl;
 
   if (success) {
@@ -441,7 +441,7 @@ export default function BookingPage() {
                       <div className="mt-6 p-5 rounded-2xl bg-primary/10 border border-primary/30">
                         <p className="text-xs text-primary font-bold uppercase mb-3 text-center">Nội dung chuyển khoản</p>
                         <div className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 border-primary shadow-inner">
-                          <span className="font-mono text-lg font-black tracking-wider text-black truncate flex-1 text-center">
+                          <span className="font-mono text-sm sm:text-base md:text-lg font-black tracking-wider text-black break-words flex-1 text-center">
                             {transferContent}
                           </span>
                           <button 
