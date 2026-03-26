@@ -27,6 +27,8 @@ type TrackedBooking = {
   return_driver_phone: string;
   total_amount: number;
   car_type: string;
+  needs: string;
+  return_time: string;
 };
 
 const STATUS_MAP: Record<string, { label: string, color: string }> = {
@@ -137,16 +139,21 @@ export default function TrackingPage() {
 
                       {/* Journey Details */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-black/40 p-5 rounded-2xl border border-white/5">
+                         {booking.needs !== '1 chiều về' && (
                          <div>
                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2"><MapPin className="h-4 w-4"/> Đón khách</p>
                             <p className="font-medium">{booking.pickup_location}</p>
                             <p className="text-sm text-gray-400">{booking.pickup_area}</p>
                             <p className="mt-3 text-sm flex items-center gap-2 text-blue-300"><Clock className="h-4 w-4"/> {booking.departure_time} - {booking.concert_date}</p>
                          </div>
-                         <div className="border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
+                         )}
+                         <div className={cn("pt-4 md:pt-0 border-white/10", booking.needs !== '1 chiều về' ? "border-t md:border-t-0 md:border-l md:pl-6" : "")}>
                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2"><MapPin className="h-4 w-4"/> Sự kiện</p>
                             <p className="font-medium">{booking.concert_name}</p>
                             <p className="mt-3 text-sm flex items-center gap-2 text-purple-300"><Car className="h-4 w-4"/> {booking.car_type.toUpperCase()}</p>
+                            {booking.needs !== '1 chiều đi' && (
+                              <p className="mt-2 text-sm flex items-center gap-2 text-orange-300"><Clock className="h-4 w-4"/> {booking.return_time} {booking.return_time !== 'kết thúc concert' ? `- ${booking.concert_date}` : ''}</p>
+                            )}
                          </div>
                       </div>
 
@@ -157,9 +164,10 @@ export default function TrackingPage() {
                          </h4>
                          {isConfirmed ? (
                            <div className="space-y-6">
+                               {booking.needs !== '1 chiều về' && (
                                <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <p className="text-xs text-gray-400 mb-1">Biển số xe (Chiều Đi)</p>
+                                    <p className="text-xs text-gray-400 mb-1">Biển số xe {booking.needs === '2 chiều' ? '(Chiều Đi)' : ''}</p>
                                     <p className="text-xl font-mono font-black">{booking.license_plate || "Đang cập nhật"}</p>
                                   </div>
                                   <div>
@@ -167,13 +175,14 @@ export default function TrackingPage() {
                                     <p className="text-xl font-black">{booking.driver_phone || "Đang cập nhật"}</p>
                                   </div>
                                </div>
+                               )}
                                
-                               {(booking.return_license_plate || booking.return_driver_phone) && (
-                               <div className="pt-4 border-t border-white/10 mt-4">
-                                   <p className="text-xs text-orange-400 font-bold mb-3 uppercase flex items-center gap-2"><Car className="h-4 w-4"/> Chuyến Về</p>
+                               {booking.needs !== '1 chiều đi' && (
+                               <div className={cn("pt-4 mt-4", booking.needs === '2 chiều' ? "border-t border-white/10" : "")}>
+                                   {booking.needs === '2 chiều' && <p className="text-xs text-orange-400 font-bold mb-3 uppercase flex items-center gap-2"><Car className="h-4 w-4"/> Chuyến Về</p>}
                                    <div className="grid grid-cols-2 gap-4">
                                       <div>
-                                        <p className="text-xs text-gray-400 mb-1">Biển số xe (Về)</p>
+                                        <p className="text-xs text-gray-400 mb-1">Biển số xe {booking.needs !== '1 chiều về' ? '(Về)' : ''}</p>
                                         <p className="text-xl font-mono font-black">{booking.return_license_plate || "Đang cập nhật"}</p>
                                       </div>
                                       <div>

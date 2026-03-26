@@ -423,10 +423,18 @@ export default function AdminDashboard() {
                                             <span className="text-gray-500">Địa điểm đón:</span>
                                             <span className="font-bold text-right ml-4">{selectedBooking.pickup_location} ({selectedBooking.pickup_area})</span>
                                         </div>
+                                        {selectedBooking.needs !== '1 chiều về' && (
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500">Thời gian đi:</span>
                                             <span className="font-bold">{selectedBooking.departure_time} - {selectedBooking.concert_date}</span>
                                         </div>
+                                        )}
+                                        {selectedBooking.needs !== '1 chiều đi' && (
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-500">Thời gian về:</span>
+                                            <span className="font-bold">{selectedBooking.return_time} {selectedBooking.return_time !== 'kết thúc concert' ? `- ${selectedBooking.concert_date}` : ''}</span>
+                                        </div>
+                                        )}
                                     </div>
                                 </section>
 
@@ -478,6 +486,7 @@ export default function AdminDashboard() {
                                             ))}
                                         </div>
                                     </div>
+                                    {selectedBooking.needs !== '1 chiều về' && (
                                     <div>
                                         <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">Thông tin Xe & Tài xế {selectedBooking.needs === '2 chiều' ? '(Chiều Đi)' : ''}</h4>
                                         <div className="grid grid-cols-2 gap-3 mb-4">
@@ -501,13 +510,14 @@ export default function AdminDashboard() {
                                             </div>
                                         </div>
                                     </div>
+                                    )}
 
-                                    {selectedBooking.needs === '2 chiều' && (
+                                    {selectedBooking.needs !== '1 chiều đi' && (
                                     <div>
-                                        <h4 className="text-xs font-bold text-orange-500/80 uppercase mb-2">Thông tin Xe & Tài xế (Chiều Về)</h4>
+                                        <h4 className="text-xs font-bold text-orange-500/80 uppercase mb-2">Thông tin Xe & Tài xế {selectedBooking.needs === '2 chiều' ? '(Chiều Về)' : ''}</h4>
                                         <div className="grid grid-cols-2 gap-3 mb-4">
                                             <div>
-                                              <p className="text-[10px] text-gray-500 mb-1">Biển số xe (Về)</p>
+                                              <p className="text-[10px] text-gray-500 mb-1">Biển số xe {selectedBooking.needs === '2 chiều' ? '(Về)' : ''}</p>
                                               <input 
                                                   className="w-full bg-black border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-orange-500"
                                                   placeholder="VD: 30A-999.99"
@@ -516,7 +526,7 @@ export default function AdminDashboard() {
                                               />
                                             </div>
                                             <div>
-                                              <p className="text-[10px] text-gray-500 mb-1">Số điện thoại tài xế (Về)</p>
+                                              <p className="text-[10px] text-gray-500 mb-1">Số điện thoại tài xế {selectedBooking.needs === '2 chiều' ? '(Về)' : ''}</p>
                                               <input 
                                                   className="w-full bg-black border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-orange-500"
                                                   placeholder="SĐT Tài xế..."
