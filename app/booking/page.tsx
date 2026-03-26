@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Music, ArrowLeft, Send, CheckCircle2, Info, Users, Car, MapPin, HelpCircle, Upload, Wallet, ReceiptText } from "lucide-react";
+import { Music, ArrowLeft, Send, CheckCircle2, Info, Users, Car, MapPin, HelpCircle, Upload, Wallet, ReceiptText, Copy } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
@@ -171,7 +171,13 @@ export default function BookingPage() {
         
         <header className="mb-12">
           <h1 className="text-4xl font-black tracking-tight mb-2 uppercase text-gradient">ĐẶT XE CONCERT</h1>
-          <p className="text-gray-400 font-medium italic">Xe cộ để chúng mình lo, việc của gai con là quẩy hết mình!</p>
+          <p className="text-gray-400 font-medium italic">Xe cộ để chúng mình lo, việc của gai con là khều tiếp day 10!!!!</p>
+          {bookingCode && (
+            <div className="mt-6 inline-flex items-center px-4 py-2 bg-white/5 border border-white/10 rounded-full shadow-lg">
+              <span className="text-xs text-gray-400 uppercase font-bold mr-2">Mã đơn hàng:</span>
+              <span className="text-sm font-black tracking-widest text-white">{bookingCode}</span>
+            </div>
+          )}
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -382,22 +388,31 @@ export default function BookingPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-6">
-                    <div className="p-6 rounded-3xl bg-background border border-primary/20 shadow-inner">
-                      <p className="text-sm text-gray-400 font-bold mb-1 uppercase">Tổng chi phí cần thanh toán</p>
-                      <h3 className="text-4xl font-black text-primary">{formatCurrency(totalAmount)}</h3>
-                      <div className="mt-4 pt-4 border-t border-border/20 text-xs text-gray-500 space-y-1">
-                        <p>• Hình thức: <span className="text-gray-300">{formData.service_type}</span></p>
-                        <p>• Số lượng: <span className="text-gray-300">{formData.service_type === "Xe ghép" ? `${formData.passengers} người` : '1 xe'}</span></p>
-                        <p>• Lộ trình: <span className="text-gray-300">{formData.needs}</span></p>
+                <div className="space-y-8 mt-8">
+                  <div className="p-6 rounded-3xl bg-background border border-primary/30 shadow-inner w-full flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                      <p className="text-sm text-gray-400 font-bold mb-1 uppercase text-center md:text-left">Tổng chi phí cần thanh toán</p>
+                      <h3 className="text-4xl font-black text-primary text-center md:text-left">{formatCurrency(totalAmount)}</h3>
+                    </div>
+                    <div className="flex gap-6 text-xs text-gray-400 font-medium border-t border-border/20 md:border-t-0 md:border-l md:pl-6 pt-4 md:pt-0 w-full md:w-auto justify-center md:justify-start">
+                      <div className="space-y-1">
+                        <p>Hình thức:</p>
+                        <p>Số lượng:</p>
+                        <p>Lộ trình:</p>
+                      </div>
+                      <div className="space-y-1 font-bold text-white text-right">
+                        <p>{formData.service_type}</p>
+                        <p>{formData.service_type === "Xe ghép" ? `${formData.passengers} người` : '1 xe'}</p>
+                        <p>{formData.needs}</p>
                       </div>
                     </div>
+                  </div>
 
-                    {/* QR Code Section (Moved up for better flow) */}
-                    <div className="space-y-4 p-4 rounded-3xl bg-white/5 border border-white/10">
-                      <p className="text-xs text-center text-gray-400 italic">Quét mã QR để thanh toán nhanh qua ứng dụng ngân hàng</p>
-                      <div className="relative aspect-square max-w-[240px] mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white/5 p-2 bg-white">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* QR Code Section */}
+                    <div className="space-y-6 p-6 rounded-3xl bg-white/5 border border-white/10">
+                      <p className="text-sm text-center text-gray-300 font-bold uppercase tracking-wider">Quét mã QR để thanh toán nhanh</p>
+                      <div className="relative aspect-square max-w-[200px] mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white/5 p-2 bg-white">
                         {isLoadingSettings ? (
                            <div className="absolute inset-0 bg-white/5 animate-pulse rounded-3xl"></div>
                         ) : (
@@ -409,46 +424,60 @@ export default function BookingPage() {
                         )}
                       </div>
                       
-                      <div className="mt-6 p-4 rounded-2xl bg-primary/10 border border-primary/20 text-center">
-                        <p className="text-xs text-primary font-bold uppercase mb-2">Lời nhắn chuyển khoản</p>
-                        <div className="bg-black/50 p-3 rounded-xl border border-white/10 font-mono text-lg font-black tracking-wider shadow-inner text-white select-all">
-                          {formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`}
+                      <div className="mt-6 p-5 rounded-2xl bg-primary/10 border border-primary/30">
+                        <p className="text-xs text-primary font-bold uppercase mb-3 text-center">Nội dung chuyển khoản</p>
+                        <div className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 border-primary shadow-inner">
+                          <span className="font-mono text-lg font-black tracking-wider text-black truncate flex-1 text-center">
+                            {formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`}
+                          </span>
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                              const content = formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`;
+                              navigator.clipboard.writeText(content);
+                              alert("Đã sao chép nội dung chuyển khoản!");
+                            }} 
+                            className="ml-3 p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-primary shrink-0" 
+                            title="Sao chép"
+                          >
+                            <Copy className="h-5 w-5" />
+                          </button>
                         </div>
-                        <p className="text-[10px] text-gray-500 mt-2 italic">
-                          (Vui lòng sao chép chính xác lời nhắn này để hệ thống đối soát tự động)
+                        <p className="text-xs text-gray-400 mt-3 text-center italic leading-relaxed">
+                          (Vui lòng <span className="text-white font-bold">sao chép chính xác</span> nội dung này để hệ thống đối soát tự động)
                         </p>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-6">
-                    <div className="space-y-4">
-                      <label className="block text-sm font-black text-gray-300 uppercase tracking-wide">
-                        <ReceiptText className="h-4 w-4 inline mr-2 text-primary" /> Hình ảnh chuyển khoản *
-                      </label>
-                      <div className={`relative border-2 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center transition-all ${
-                        receiptFile ? "border-green-500 bg-green-500/5" : "border-border/50 hover:border-primary/50 cursor-pointer"
-                      }`}>
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          onChange={handleFileChange}
-                          className="absolute inset-0 opacity-0 cursor-pointer"
-                          required
-                        />
-                        {receiptFile ? (
-                          <>
-                            <CheckCircle2 className="h-10 w-10 text-green-500 mb-2" />
-                            <p className="text-sm font-bold text-green-500">Đã chọn ảnh!</p>
-                            <p className="text-xs text-green-500/70 truncate max-w-full px-4">{receiptFile.name}</p>
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="h-10 w-10 text-gray-500 mb-2" />
-                            <p className="text-sm font-bold text-gray-400">Tải ảnh biên lai (Bắt buộc)</p>
-                            <p className="text-xs text-gray-500 mt-1">Hệ thống chỉ chấp nhận định dạng ảnh (.jpg, .png)</p>
-                          </>
-                        )}
+                    <div className="space-y-6 p-6 rounded-3xl bg-white/5 border border-white/10">
+                      <div className="space-y-4 h-full flex flex-col">
+                        <label className="block text-sm font-black text-gray-300 uppercase tracking-wide text-center md:text-left">
+                          <ReceiptText className="h-4 w-4 inline mr-2 text-primary" /> Hình ảnh chuyển khoản *
+                        </label>
+                        <div className={`relative flex-1 border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all ${
+                          receiptFile ? "border-green-500 bg-green-500/5" : "border-border/50 hover:border-primary/50 cursor-pointer bg-background/50"
+                        }`}>
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={handleFileChange}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            required
+                          />
+                          {receiptFile ? (
+                            <>
+                              <CheckCircle2 className="h-10 w-10 text-green-500 mb-3" />
+                              <p className="text-base font-bold text-green-500">Đã chọn ảnh!</p>
+                              <p className="text-sm text-green-500/80 truncate max-w-full px-4 mt-2">...{receiptFile.name.slice(-15)}</p>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="h-10 w-10 text-gray-500 mb-3" />
+                              <p className="text-sm font-bold text-gray-400">Chạm để tải ảnh lên (Bắt buộc)</p>
+                              <p className="text-xs text-gray-600 mt-2">Hỗ trợ định dạng .jpg, .png</p>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
