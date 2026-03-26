@@ -69,12 +69,13 @@ export async function PUT(req: Request) {
         INSERT INTO app_settings (key, value) 
         VALUES (?, ?) 
         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+        RETURNING key
       `, [key, String(value)]);
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to update settings:', error);
-    return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed to update settings' }, { status: 500 });
   }
 }
