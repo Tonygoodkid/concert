@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       concert_location, pickup_area, pickup_location, passengers,
       car_type, needs, departure_time, return_time, budget, notes,
       group_with_friends, optimize_cost, private_car, children_luggage,
-      service_type, total_amount, payment_receipt_path
+      service_type, total_amount, payment_receipt_path, booking_code
     } = body;
 
     const result = await db.execute(`
@@ -33,15 +33,15 @@ export async function POST(request: Request) {
         concert_location, pickup_area, pickup_location, passengers,
         car_type, needs, departure_time, return_time, budget, notes,
         group_with_friends, optimize_cost, private_car, children_luggage,
-        service_type, total_amount, payment_receipt_path
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        service_type, total_amount, payment_receipt_path, booking_code
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       customer_name, phone, contact_method, concert_name, concert_date,
       concert_location, pickup_area, pickup_location, passengers,
       car_type, needs, departure_time, return_time, budget, notes,
       group_with_friends ? 1 : 0, optimize_cost ? 1 : 0, 
       private_car ? 1 : 0, children_luggage ? 1 : 0,
-      service_type, total_amount, payment_receipt_path
+      service_type, total_amount, payment_receipt_path, booking_code
     ]);
 
     return NextResponse.json({ id: result.lastInsertRowid }, { status: 201 });

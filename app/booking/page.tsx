@@ -24,8 +24,12 @@ export default function BookingPage() {
   const [prices, setPrices] = useState(DEFAULT_PRICES);
   const [qrCodeUrl, setQrCodeUrl] = useState("/images/payment_qr.png");
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [bookingCode, setBookingCode] = useState("");
 
   useEffect(() => {
+    // Generate Booking Code
+    const code = "CG" + Math.random().toString(36).substring(2, 7).toUpperCase();
+    setBookingCode(code);
     const fetchSettings = async () => {
       try {
         const res = await fetch("/api/settings");
@@ -119,6 +123,7 @@ export default function BookingPage() {
           ...formData,
           total_amount: totalAmount,
           payment_receipt_path: receiptFile.name, // In a real app, this would be the uploaded URL
+          booking_code: bookingCode
         }),
       });
       if (res.ok) {
@@ -402,6 +407,16 @@ export default function BookingPage() {
                              className="w-full h-full object-contain absolute inset-0 p-2"
                            />
                         )}
+                      </div>
+                      
+                      <div className="mt-6 p-4 rounded-2xl bg-primary/10 border border-primary/20 text-center">
+                        <p className="text-xs text-primary font-bold uppercase mb-2">Lời nhắn chuyển khoản</p>
+                        <div className="bg-black/50 p-3 rounded-xl border border-white/10 font-mono text-lg font-black tracking-wider shadow-inner text-white select-all">
+                          {formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`}
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-2 italic">
+                          (Vui lòng sao chép chính xác lời nhắn này để hệ thống đối soát tự động)
+                        </p>
                       </div>
                     </div>
                   </div>

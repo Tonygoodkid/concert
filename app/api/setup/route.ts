@@ -31,9 +31,17 @@ export async function GET() {
         status TEXT DEFAULT 'mới nhận',
         internal_notes TEXT,
         lead_source TEXT DEFAULT 'website',
+        booking_code TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `;
+
+    // Attempt to alter table if it already exists (Postgres)
+    try {
+      await sql`ALTER TABLE booking_requests ADD COLUMN booking_code TEXT`;
+    } catch (e) {
+      // Ignore if column already exists
+    }
 
     await sql`
       CREATE TABLE IF NOT EXISTS status_history (

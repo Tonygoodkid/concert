@@ -42,6 +42,7 @@ class LocalDB {
         status TEXT DEFAULT 'mới nhận',
         internal_notes TEXT,
         lead_source TEXT DEFAULT 'website',
+        booking_code TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
 
@@ -67,6 +68,13 @@ class LocalDB {
         value TEXT
       );
     `);
+
+    // Ensure booking_code exists for existing SQLite databases
+    try {
+      this.db.exec("ALTER TABLE booking_requests ADD COLUMN booking_code TEXT;");
+    } catch (e) {
+      // Column might already exist, ignore error
+    }
   }
 
   async query(queryString: string, params: any[] = []) {

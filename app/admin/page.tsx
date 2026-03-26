@@ -48,6 +48,7 @@ type Booking = {
   status: string;
   internal_notes: string;
   lead_source: string;
+  booking_code: string;
   created_at: string;
 };
 
@@ -312,6 +313,7 @@ export default function AdminDashboard() {
                                         <div>
                                             <div className="font-bold flex items-center gap-2">
                                                 {booking.customer_name}
+                                                <span className="text-xs text-gray-500 font-mono bg-white/5 px-2 rounded hidden sm:inline-block">#{booking.booking_code}</span>
                                                 <span className={cn(
                                                     "text-[10px] px-2 py-0.5 rounded-full border uppercase font-bold",
                                                     STATUS_COLORS[booking.status]
@@ -358,6 +360,10 @@ export default function AdminDashboard() {
                                 <section>
                                     <h4 className="text-xs font-bold text-primary uppercase mb-3 tracking-widest">Khách hàng</h4>
                                     <div className="space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-500">Mã đặt chỗ:</span>
+                                            <span className="font-bold text-primary font-mono">{selectedBooking.booking_code}</span>
+                                        </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500">Họ tên:</span>
                                             <span className="font-bold">{selectedBooking.customer_name}</span>
