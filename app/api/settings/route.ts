@@ -14,6 +14,8 @@ const defaultSettings = [
   { key: 'price_29_private', value: '3200000' }
 ];
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     // If local SQLite, ensure defaults are inserted
