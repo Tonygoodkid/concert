@@ -3,6 +3,9 @@ import db from '@/lib/db';
 
 const defaultSettings = [
   { key: 'qr_code_url', value: '/images/payment_qr.png' },
+  { key: 'bank_id', value: 'VCB' },
+  { key: 'bank_account_no', value: '1111111111' },
+  { key: 'bank_account_name', value: 'NGUYEN VAN A' },
   { key: 'price_7_shared', value: '150000' },
   { key: 'price_7_private', value: '1000000' },
   { key: 'price_16_shared', value: '120000' },
@@ -31,10 +34,15 @@ export async function GET() {
       console.warn("Table might not exist yet", err);
     }
 
-    const effectiveRows = rows.length === 0 ? defaultSettings : rows;
-
     const settingsObj: Record<string, string> = {};
-    effectiveRows.forEach((row: any) => {
+    
+    // 1. Populate defaults first
+    defaultSettings.forEach((setting) => {
+      settingsObj[setting.key] = setting.value;
+    });
+
+    // 2. Override with DB values
+    rows.forEach((row: any) => {
       settingsObj[row.key] = row.value;
     });
 
