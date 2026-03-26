@@ -209,7 +209,7 @@ export default function BookingPage() {
   const transferContent = `${cleanName} ${bookingCode}`;
   
   const dynamicQrUrl = bankSettings 
-    ? `https://img.vietqr.io/image/${bankSettings.id}-${bankSettings.no}-compact.png?amount=${totalAmount}&addInfo=${encodeURIComponent(transferContent)}`
+    ? `https://img.vietqr.io/image/${bankSettings.id}-${bankSettings.no}-print.png?amount=${totalAmount}&addInfo=${encodeURIComponent(transferContent)}`
     : qrCodeUrl;
 
   if (success) {
@@ -481,14 +481,14 @@ export default function BookingPage() {
                     {/* QR Code Section */}
                     <div className="space-y-6 p-6 rounded-3xl bg-white/5 border border-white/10">
                       <p className="text-sm text-center text-gray-300 font-bold uppercase tracking-wider">Quét mã QR để thanh toán nhanh</p>
-                      <div className="aspect-[4/5] bg-white rounded-3xl relative overflow-hidden ring-4 ring-white/10 shadow-2xl">
+                      <div className="bg-white rounded-3xl overflow-hidden ring-4 ring-white/10 shadow-2xl flex items-center justify-center">
                         {isLoadingSettings ? (
-                           <div className="absolute inset-0 bg-white/5 animate-pulse rounded-3xl"></div>
+                           <div className="h-64 w-full bg-white/5 animate-pulse rounded-3xl"></div>
                         ) : (
                            <img 
                              src={dynamicQrUrl} 
                              alt="Payment QR" 
-                             className="w-full h-full object-contain absolute inset-0"
+                             className="w-full h-auto max-h-[500px] object-contain"
                            />
                         )}
                       </div>

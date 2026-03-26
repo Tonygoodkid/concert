@@ -18,8 +18,13 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4 underline decoration-primary decoration-2 underline-offset-4">Liên hệ</h4>
             <div className="space-y-2 text-sm text-gray-400">
-              <p className="flex items-center gap-2"><Phone className="h-4 w-4" /> 090 123 4567</p>
-              <p className="flex items-center gap-2"><MessageCircle className="h-4 w-4" /> Zalo: Concert Go Team</p>
+              <p className="flex items-center gap-2"><Phone className="h-4 w-4" /> 0822 555 394</p>
+              <p className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4" /> 
+                <a href="https://zalo.me/0822555394" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition-colors">
+                  Zalo: 0822 555 394
+                </a>
+              </p>
             </div>
           </div>
           <div>
