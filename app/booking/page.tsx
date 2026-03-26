@@ -184,6 +184,10 @@ export default function BookingPage() {
           <CheckCircle2 className="h-12 w-12 text-green-500" />
         </div>
         <h1 className="text-3xl font-bold mb-4">Đặt chỗ thành công!</h1>
+        <div className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/10 w-full max-w-sm">
+           <p className="text-sm text-gray-400 mb-1 uppercase tracking-widest">Mã tra cứu đơn hàng</p>
+           <h2 className="text-4xl font-mono font-black tracking-widest text-primary">{bookingCode}</h2>
+        </div>
         <p className="text-gray-400 max-w-sm mb-12 leading-relaxed">
           Cảm ơn các đồng gai đã tin tưởng bọn mình. Chúng tớ đã nhận được thông tin đơn hàng và ảnh thanh toán. Thông tin sẽ được xác nhận và được cập nhật trạng thái đơn hàng tại trang chủ mục Tra cứu đơn. Bạn sẽ được thêm vào group xe Zalo trước ngày khởi hành.
         </p>
@@ -360,27 +364,22 @@ export default function BookingPage() {
                     <option value="15:30 PM">15:30 PM</option>
                 </Select>
                 
-                <div className="space-y-1.5 relative">
-                    <div className="flex items-center gap-1.5">
-                        <label className="block text-sm font-semibold text-gray-300">Giờ về (Dự kiến)</label>
-                        <div className="group relative">
-                            <Info className="h-4 w-4 text-primary cursor-help" />
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-zinc-900 border border-primary/20 text-[11px] text-gray-300 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 leading-relaxed backdrop-blur-xl">
-                                Xe về sẽ theo lịch kết thúc thực tế tại sự kiện, sẽ đợi tối đa 30 phút sau thời điểm kết thúc concert.
-                            </div>
+                <Select 
+                    label={
+                        <div>
+                            <span className="block text-sm font-semibold text-gray-300">Giờ về (Dự kiến)</span>
+                            <span className="block text-[10px] text-primary/80 mt-1 mb-2 font-normal italic">* Xe sẽ đợi tối đa 30p sau khi kết thúc concert</span>
                         </div>
-                    </div>
-                    <Select 
-                        name="return_time" 
-                        value={formData.return_time} 
-                        onChange={handleChange}
-                        disabled={isReturnDisabled}
-                        className={isReturnDisabled ? "opacity-30 cursor-not-allowed" : ""}
-                    >
-                        <option value="-">-</option>
-                        <option value="kết thúc concert">kết thúc concert</option>
-                    </Select>
-                </div>
+                    }
+                    name="return_time" 
+                    value={formData.return_time} 
+                    onChange={handleChange}
+                    disabled={isReturnDisabled}
+                    className={isReturnDisabled ? "opacity-30 cursor-not-allowed" : ""}
+                >
+                    <option value="-">-</option>
+                    <option value="kết thúc concert">kết thúc concert</option>
+                </Select>
               </div>
             </CardContent>
           </Card>
@@ -459,27 +458,10 @@ export default function BookingPage() {
                         )}
                       </div>
                       
-                      <div className="mt-6 p-5 rounded-2xl bg-primary/10 border border-primary/30">
-                        <p className="text-xs text-primary font-bold uppercase mb-3 text-center">Nội dung chuyển khoản</p>
-                        <div className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 border-primary shadow-inner">
-                          <span className="font-mono text-sm sm:text-base md:text-lg font-black tracking-wider text-black break-words flex-1 text-center">
-                            {transferContent}
-                          </span>
-                          <button 
-                            type="button" 
-                            onClick={() => {
-                              navigator.clipboard.writeText(transferContent);
-                              alert("Đã sao chép nội dung chuyển khoản!");
-                            }} 
-                            className="ml-3 p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-primary shrink-0" 
-                            title="Sao chép"
-                          >
-                            <Copy className="h-5 w-5" />
-                          </button>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-3 text-center italic leading-relaxed">
-                          (Vui lòng <span className="text-white font-bold">sao chép chính xác</span> nội dung này để hệ thống đối soát tự động)
-                        </p>
+                      <div className="mt-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30 text-center">
+                         <p className="text-sm text-orange-200/80 leading-relaxed">
+                           <span className="font-bold text-orange-400">Lưu ý:</span> Khách hàng vui lòng kiểm tra kĩ <strong>số tiền</strong> và <strong>nội dung chuyển khoản</strong> trên ứng dụng ngân hàng sau khi quét QR để hệ thống tự động đối soát nhé!
+                         </p>
                       </div>
                     </div>
 
