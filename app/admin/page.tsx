@@ -510,22 +510,30 @@ export default function AdminDashboard() {
 
                 <Card className="border-[#1a1a1a] bg-[#0a0a0a]">
                   <CardHeader className="border-b border-[#1a1a1a]">
-                    <CardTitle className="text-lg text-primary">Thông tin thanh toán</CardTitle>
+                    <CardTitle className="text-lg text-primary">Thông tin thanh toán (VietQR Tự động)</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6">
+                  <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <Input 
-                      label="Link ảnh QR Code" 
+                      label="Mã ngân hàng (Casso/VietQR)" 
                       type="text" 
-                      placeholder="VD: /images/payment_qr.png hoặc URL trực tiếp"
-                      value={settings.qr_code_url || ""} 
-                      onChange={(e) => setSettings({...settings, qr_code_url: e.target.value})} 
+                      placeholder="VD: VCB, MB, TCB, ACB..."
+                      value={settings.bank_id || ""} 
+                      onChange={(e) => setSettings({...settings, bank_id: e.target.value.toUpperCase()})} 
                     />
-                    {settings.qr_code_url && (
-                       <div className="mt-4 p-4 border border-[#1a1a1a] rounded-xl flex justify-center bg-white/5">
-                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                         <img src={settings.qr_code_url} alt="QR Preview" className="max-h-[200px] rounded-lg" />
-                       </div>
-                    )}
+                    <Input 
+                      label="Số tài khoản" 
+                      type="text" 
+                      placeholder="Nhập số tài khoản"
+                      value={settings.bank_account_no || ""} 
+                      onChange={(e) => setSettings({...settings, bank_account_no: e.target.value})} 
+                    />
+                    <Input 
+                      label="Tên chủ tài khoản" 
+                      type="text" 
+                      placeholder="VIẾT HOA KHÔNG DẤU"
+                      value={settings.bank_account_name || ""} 
+                      onChange={(e) => setSettings({...settings, bank_account_name: e.target.value.toUpperCase()})} 
+                    />
                   </CardContent>
                 </Card>
 

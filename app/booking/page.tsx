@@ -23,6 +23,7 @@ export default function BookingPage() {
   
   const [prices, setPrices] = useState(DEFAULT_PRICES);
   const [qrCodeUrl, setQrCodeUrl] = useState("/images/payment_qr.png");
+  const [bankSettings, setBankSettings] = useState<{ id: string, no: string, name: string } | null>(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [bookingCode, setBookingCode] = useState("");
 
@@ -36,6 +37,13 @@ export default function BookingPage() {
         if (res.ok) {
           const data = await res.json();
           if (data) {
+            if (data.bank_id && data.bank_account_no && data.bank_account_name) {
+              setBankSettings({
+                id: data.bank_id,
+                no: data.bank_account_no,
+                name: data.bank_account_name,
+              });
+            }
             if (data.qr_code_url) setQrCodeUrl(data.qr_code_url);
             setPrices({
               "xe 7 chỗ": { 
@@ -141,6 +149,12 @@ export default function BookingPage() {
 
   const isDepartureDisabled = formData.needs === "1 chiều về";
   const isReturnDisabled = formData.needs === "1 chiều đi";
+
+  const transferContent = formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`;
+  
+  const dynamicQrUrl = bankSettings 
+    ? `https://img.vietqr.io/image/${bankSettings.id}-${bankSettings.no}-compact2.png?amount=${totalAmount}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bankSettings.name)}`
+    : qrCodeUrl;
 
   if (success) {
     return (
@@ -417,9 +431,9 @@ export default function BookingPage() {
                            <div className="absolute inset-0 bg-white/5 animate-pulse rounded-3xl"></div>
                         ) : (
                            <img 
-                             src={qrCodeUrl} 
+                             src={dynamicQrUrl} 
                              alt="Payment QR" 
-                             className="w-full h-full object-contain absolute inset-0 p-2"
+                             className="w-full h-full object-contain absolute inset-0 p-3 bg-white"
                            />
                         )}
                       </div>
@@ -428,13 +442,12 @@ export default function BookingPage() {
                         <p className="text-xs text-primary font-bold uppercase mb-3 text-center">Nội dung chuyển khoản</p>
                         <div className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 border-primary shadow-inner">
                           <span className="font-mono text-lg font-black tracking-wider text-black truncate flex-1 text-center">
-                            {formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`}
+                            {transferContent}
                           </span>
                           <button 
                             type="button" 
                             onClick={() => {
-                              const content = formData.customer_name ? `${formData.customer_name.replace(/[^a-zA-Z0-9 ]/g, "").toUpperCase()} ${bookingCode}` : `[TEN CUA BAN] ${bookingCode}`;
-                              navigator.clipboard.writeText(content);
+                              navigator.clipboard.writeText(transferContent);
                               alert("Đã sao chép nội dung chuyển khoản!");
                             }} 
                             className="ml-3 p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-primary shrink-0" 

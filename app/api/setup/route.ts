@@ -73,6 +73,9 @@ export async function GET() {
     // Seed default settings if empty
     const defaultSettings = [
       { key: 'qr_code_url', value: '/images/payment_qr.png' },
+      { key: 'bank_id', value: 'VCB' },
+      { key: 'bank_account_no', value: '1111111111' },
+      { key: 'bank_account_name', value: 'NGUYEN VAN A' },
       { key: 'price_7_shared', value: '150000' },
       { key: 'price_7_private', value: '1000000' },
       { key: 'price_16_shared', value: '120000' },
