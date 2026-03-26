@@ -102,11 +102,18 @@ export default function AdminDashboard() {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch("/api/settings", { headers: getHeaders() });
+      const res = await fetch("/api/settings", { 
+        headers: getHeaders(),
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
       const data = await res.json();
       setSettings(data);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Failed to fetch settings:", error);
+      alert("Lỗi khi tải cài đặt.");
     }
   };
 
@@ -119,7 +126,12 @@ export default function AdminDashboard() {
         headers: getHeaders(),
         body: JSON.stringify(settings),
       });
-      if (res.ok) alert("Lưu cài đặt thành công!");
+      if (res.ok) {
+        alert("Lưu cài đặt thành công!");
+      } else {
+        const d = await res.json();
+        alert(`Lỗi lưu cài đặt: ${d.error || res.status}`);
+      }
     } catch (err) {
       alert("Lỗi khi lưu cài đặt.");
     } finally {
@@ -130,7 +142,10 @@ export default function AdminDashboard() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/bookings", { headers: getHeaders() });
+      const res = await fetch("/api/bookings", { 
+        headers: getHeaders(),
+        cache: "no-store",
+      });
       const data = await res.json();
       setBookings(data);
     } catch (error) {
