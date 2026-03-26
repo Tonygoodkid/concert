@@ -177,6 +177,16 @@ export default function BookingPage() {
     e.preventDefault();
     if (!receiptFile) return;
 
+    if (formData.needs !== "1 chiều về" && formData.departure_time === "-") {
+      alert("Vui lòng chọn Giờ muốn đi.");
+      return;
+    }
+
+    if (formData.needs !== "1 chiều đi" && formData.return_time === "-") {
+      alert("Vui lòng chọn Giờ về (Dự kiến).");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/bookings", {

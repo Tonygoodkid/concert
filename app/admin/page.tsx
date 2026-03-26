@@ -17,7 +17,8 @@ import {
   RefreshCcw,
   FileText,
   Settings,
-  Lock
+  Lock,
+  ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
@@ -290,30 +291,36 @@ export default function AdminDashboard() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-1 sm:flex-none flex-col sm:flex-row items-center gap-3">
                 <Filter className="h-4 w-4 text-gray-500 hidden sm:block" />
-                <Select 
-                    className="h-10 text-sm py-0 w-full md:w-40" 
-                    value={carTypeFilter} 
-                    onChange={(e) => setCarTypeFilter(e.target.value)}
-                >
-                    <option value="all">Tất cả xe</option>
-                    <option value="xe 7 chỗ">Xe 7 chỗ</option>
-                    <option value="Xe 16 chỗ">Xe 16 chỗ</option>
-                    <option value="Xe 29 chỗ">Xe 29 chỗ</option>
-                </Select>
-                <Select 
-                    className="h-10 text-sm py-0 w-full md:w-44" 
-                    value={statusFilter} 
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                    <option value="all">Tất cả trạng thái</option>
-                    <option value="mới nhận">Mới nhận</option>
-                    <option value="đang xác thực">Đang xác thực</option>
-                    <option value="đã xác thực">Đã xác thực</option>
-                    <option value="đã có thông tin xe">Đã có thông tin xe</option>
-                    <option value="đã hủy">Đã hủy</option>
-                </Select>
+                <div className="relative w-full sm:w-auto">
+                    <select 
+                        className="h-10 text-sm py-0 w-full sm:w-40 rounded-xl border border-[#333333] bg-[#1a1a1a] px-4 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none"
+                        value={carTypeFilter} 
+                        onChange={(e) => setCarTypeFilter(e.target.value)}
+                    >
+                        <option value="all">Tất cả xe</option>
+                        <option value="xe 7 chỗ">Xe 7 chỗ</option>
+                        <option value="Xe 16 chỗ">Xe 16 chỗ</option>
+                        <option value="Xe 29 chỗ">Xe 29 chỗ</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                </div>
+                <div className="relative w-full sm:w-auto">
+                    <select 
+                        className="h-10 text-sm py-0 w-full sm:w-44 rounded-xl border border-[#333333] bg-[#1a1a1a] px-4 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none"
+                        value={statusFilter} 
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="mới nhận">Mới nhận</option>
+                        <option value="đang xác thực">Đang xác thực</option>
+                        <option value="đã xác thực">Đã xác thực</option>
+                        <option value="đã có thông tin xe">Đã có thông tin xe</option>
+                        <option value="đã hủy">Đã hủy</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                </div>
             </div>
         </div>
 

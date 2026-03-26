@@ -13,7 +13,9 @@ export async function GET(request: Request) {
     }
 
     const rawQuery = query.trim();
-    const searchTermCode = rawQuery.toUpperCase().startsWith('#') ? rawQuery.toUpperCase() : '#' + rawQuery.toUpperCase();
+    // Remove `#` if it exists because the DB saves codes without it
+    const cleanCode = rawQuery.replace(/^#/, '');
+    const searchTermCode = cleanCode.toUpperCase();
     const searchTermPhone = `%${rawQuery}%`;
     
     // Search by exact booking_code or exact phone
