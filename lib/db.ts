@@ -73,11 +73,17 @@ class LocalDB {
       );
     `);
 
-    // Ensure booking_code exists for existing SQLite databases
-    try {
-      this.db.exec("ALTER TABLE booking_requests ADD COLUMN booking_code TEXT;");
-    } catch (e) {
-      // Column might already exist, ignore error
+    // Ensure all columns exist for existing SQLite databases
+    const columns = [
+      "booking_code", "license_plate", "driver_phone", 
+      "return_license_plate", "return_driver_phone"
+    ];
+    for (const column of columns) {
+      try {
+        this.db.exec(`ALTER TABLE booking_requests ADD COLUMN ${column} TEXT;`);
+      } catch (e) {
+        // Column might already exist, ignore error
+      }
     }
   }
 
