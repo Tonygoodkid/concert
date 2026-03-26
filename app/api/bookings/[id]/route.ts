@@ -14,7 +14,7 @@ export async function PATCH(
     const resolvedParams = await params;
     const { id } = resolvedParams;
     const body = await req.json();
-    const { status, internal_notes } = body;
+    const { status, internal_notes, license_plate, driver_phone, return_license_plate, return_driver_phone } = body;
 
     if (status) {
       await db.execute('UPDATE booking_requests SET status = ? WHERE id = ?', [status, id]);
@@ -23,6 +23,18 @@ export async function PATCH(
 
     if (internal_notes !== undefined) {
       await db.execute('UPDATE booking_requests SET internal_notes = ? WHERE id = ?', [internal_notes, id]);
+    }
+    if (license_plate !== undefined) {
+      await db.execute('UPDATE booking_requests SET license_plate = ? WHERE id = ?', [license_plate, id]);
+    }
+    if (driver_phone !== undefined) {
+      await db.execute('UPDATE booking_requests SET driver_phone = ? WHERE id = ?', [driver_phone, id]);
+    }
+    if (return_license_plate !== undefined) {
+      await db.execute('UPDATE booking_requests SET return_license_plate = ? WHERE id = ?', [return_license_plate, id]);
+    }
+    if (return_driver_phone !== undefined) {
+      await db.execute('UPDATE booking_requests SET return_driver_phone = ? WHERE id = ?', [return_driver_phone, id]);
     }
 
     return NextResponse.json({ success: true });

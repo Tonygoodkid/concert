@@ -23,15 +23,18 @@ type TrackedBooking = {
   status: string;
   license_plate: string;
   driver_phone: string;
+  return_license_plate: string;
+  return_driver_phone: string;
   total_amount: number;
   car_type: string;
 };
 
 const STATUS_MAP: Record<string, { label: string, color: string }> = {
   "mới nhận": { label: "Chờ xác nhận", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
-  "đã liên hệ": { label: "Đang xử lý", color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" },
-  "đã báo giá": { label: "Chờ thanh toán", color: "text-orange-400 bg-orange-400/10 border-orange-400/20" },
-  "đã chốt": { label: "Đã chốt xe", color: "text-green-400 bg-green-400/10 border-green-400/20" },
+  "đang xác thực": { label: "Chờ xác nhận", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
+  "đã xác thực": { label: "Đã xác nhận", color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" },
+  "đã có thông tin xe": { label: "Đã có tài xế", color: "text-green-400 bg-green-400/10 border-green-400/20" },
+  "đã chốt": { label: "Đã chốt xe (Cũ)", color: "text-green-400 bg-green-400/10 border-green-400/20" },
   "đã hủy": { label: "Đã hủy", color: "text-red-400 bg-red-400/10 border-red-400/20" },
 };
 
@@ -115,7 +118,7 @@ export default function TrackingPage() {
             ) : (
               results.map((booking) => {
                 const statusInfo = STATUS_MAP[booking.status.toLowerCase()] || { label: booking.status, color: "text-gray-400 bg-gray-400/10 border-gray-400/20" };
-                const isConfirmed = booking.status.toLowerCase() === "đã chốt";
+                const isConfirmed = booking.status.toLowerCase() === "đã chốt" || booking.status.toLowerCase() === "đã có thông tin xe";
 
                 return (
                   <Card key={booking.id} className="bg-card border-white/10 overflow-hidden relative">
@@ -153,32 +156,59 @@ export default function TrackingPage() {
                            <User className="h-4 w-4"/> Thông tin Tài xế
                          </h4>
                          {isConfirmed ? (
-                           <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <p className="text-xs text-gray-400 mb-1">Biển số xe</p>
-                                <p className="text-xl font-mono font-black">{booking.license_plate || "Đang cập nhật"}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-400 mb-1">SĐT liên hệ</p>
-                                <p className="text-xl font-black">{booking.driver_phone || "Đang cập nhật"}</p>
-                              </div>
+                           <div className="space-y-6">
+                               <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <p className="text-xs text-gray-400 mb-1">Biển số xe (Chiều Đi)</p>
+                                    <p className="text-xl font-mono font-black">{booking.license_plate || "Đang cập nhật"}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400 mb-1">SĐT liên hệ</p>
+                                    <p className="text-xl font-black">{booking.driver_phone || "Đang cập nhật"}</p>
+                                  </div>
+                               </div>
+                               
+                               {(booking.return_license_plate || booking.return_driver_phone) && (
+                               <div className="pt-4 border-t border-white/10 mt-4">
+                                   <p className="text-xs text-orange-400 font-bold mb-3 uppercase flex items-center gap-2"><Car className="h-4 w-4"/> Chuyến Về</p>
+                                   <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <p className="text-xs text-gray-400 mb-1">Biển số xe (Về)</p>
+                                        <p className="text-xl font-mono font-black">{booking.return_license_plate || "Đang cập nhật"}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-gray-400 mb-1">SĐT liên hệ</p>
+                                        <p className="text-xl font-black">{booking.return_driver_phone || "Đang cập nhật"}</p>
+                                      </div>
+                                   </div>
+                               </div>
+                               )}
                            </div>
                          ) : (
                            <div className="text-center py-4 text-gray-400 text-sm space-y-2">
                              <Car className="h-8 w-8 mx-auto opacity-50" />
-                             <p>Hệ thống đang sắp xếp xe cho bạn.</p>
-                             <p>Thông tin biển số và tài xế sẽ hiển thị khi chuyến đi được xác nhận <span className="text-green-400 font-bold">(ĐÃ CHỐT)</span>.</p>
+                             <p>Hệ thống đang xác nhận hoặc sắp xếp xe cho bạn.</p>
+                             <p>Thông tin biển số và tài xế sẽ hiển thị khi chuyến đi được xác nhận <span className="text-green-400 font-bold">(ĐÃ CÓ TÀI XẾ)</span>.</p>
                            </div>
                          )}
                       </div>
                       
-                      {isConfirmed && booking.driver_phone && (
-                        <div className="flex gap-3">
-                          <a href={`tel:${booking.driver_phone}`} className="flex-1">
-                            <Button className="w-full bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20">
-                              <Phone className="h-4 w-4 mr-2" /> Gọi Tài xế
-                            </Button>
-                          </a>
+                      {isConfirmed && (booking.driver_phone || booking.return_driver_phone) && (
+                        <div className="flex gap-3 flex-col sm:flex-row">
+                          {booking.driver_phone && (
+                            <a href={`tel:${booking.driver_phone}`} className="flex-1">
+                              <Button className="w-full bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20">
+                                <Phone className="h-4 w-4 mr-2" /> Gọi Tài xế (ĐI)
+                              </Button>
+                            </a>
+                          )}
+                          {booking.return_driver_phone && (
+                            <a href={`tel:${booking.return_driver_phone}`} className="flex-1">
+                              <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-900/20">
+                                <Phone className="h-4 w-4 mr-2" /> Gọi Tài xế (VỀ)
+                              </Button>
+                            </a>
+                          )}
                         </div>
                       )}
                     </CardContent>

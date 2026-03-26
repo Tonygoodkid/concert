@@ -45,6 +45,8 @@ class LocalDB {
         booking_code TEXT,
         license_plate TEXT,
         driver_phone TEXT,
+        return_license_plate TEXT,
+        return_driver_phone TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
 

@@ -51,14 +51,17 @@ type Booking = {
   booking_code: string;
   license_plate: string;
   driver_phone: string;
+  return_license_plate: string;
+  return_driver_phone: string;
+  payment_receipt_path: string;
   created_at: string;
 };
 
 const STATUS_COLORS: Record<string, string> = {
   "mới nhận": "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  "đã liên hệ": "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
-  "đã báo giá": "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  "đã chốt": "bg-green-500/10 text-green-500 border-green-500/20",
+  "đang xác thực": "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  "đã xác thực": "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+  "đã có thông tin xe": "bg-green-500/10 text-green-500 border-green-500/20",
   "đã hủy": "bg-red-500/10 text-red-500 border-red-500/20",
 };
 
@@ -67,6 +70,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [carTypeFilter, setCarTypeFilter] = useState("all");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [activeTab, setActiveTab] = useState("bookings");
@@ -181,9 +185,11 @@ export default function AdminDashboard() {
   const filteredBookings = bookings.filter((b) => {
     const matchesSearch = 
       b.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.phone.includes(searchTerm);
-    const matchesStatus = statusFilter === "all" || b.status === statusFilter;
-    return matchesSearch && matchesStatus;
+      b.phone.includes(searchTerm) || 
+      (b.booking_code && b.booking_code.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesStatus = statusFilter === "all" || b.status.toLowerCase() === statusFilter.toLowerCase();
+    const matchesCarType = carTypeFilter === "all" || b.car_type === carTypeFilter;
+    return matchesSearch && matchesStatus && matchesCarType;
   });
 
   if (!isAuthenticated) {
@@ -284,18 +290,28 @@ export default function AdminDashboard() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-gray-500" />
+            <div className="flex flex-wrap items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-500 hidden sm:block" />
                 <Select 
-                    className="h-10 text-sm py-0 w-40" 
+                    className="h-10 text-sm py-0 w-full md:w-40" 
+                    value={carTypeFilter} 
+                    onChange={(e) => setCarTypeFilter(e.target.value)}
+                >
+                    <option value="all">Tất cả xe</option>
+                    <option value="xe 7 chỗ">Xe 7 chỗ</option>
+                    <option value="Xe 16 chỗ">Xe 16 chỗ</option>
+                    <option value="Xe 29 chỗ">Xe 29 chỗ</option>
+                </Select>
+                <Select 
+                    className="h-10 text-sm py-0 w-full md:w-44" 
                     value={statusFilter} 
                     onChange={(e) => setStatusFilter(e.target.value)}
                 >
                     <option value="all">Tất cả trạng thái</option>
                     <option value="mới nhận">Mới nhận</option>
-                    <option value="đã liên hệ">Đã liên hệ</option>
-                    <option value="đã báo giá">Đã báo giá</option>
-                    <option value="đã chốt">Đã chốt</option>
+                    <option value="đang xác thực">Đang xác thực</option>
+                    <option value="đã xác thực">Đã xác thực</option>
+                    <option value="đã có thông tin xe">Đã có thông tin xe</option>
                     <option value="đã hủy">Đã hủy</option>
                 </Select>
             </div>
@@ -426,6 +442,21 @@ export default function AdminDashboard() {
                                     </div>
                                 </section>
 
+                                <section>
+                                    <h4 className="text-xs font-bold text-primary uppercase mb-3 tracking-widest">Biên lai thanh toán</h4>
+                                    {selectedBooking.payment_receipt_path && selectedBooking.payment_receipt_path !== 'N/A' ? (
+                                        <div className="rounded-xl overflow-hidden border border-white/10 bg-black min-h-[100px] max-h-[400px] flex items-center justify-center relative group">
+                                            {selectedBooking.payment_receipt_path.startsWith('data:image') || selectedBooking.payment_receipt_path.startsWith('http') ? (
+                                                <img src={selectedBooking.payment_receipt_path} alt="Receipt" className="max-w-full max-h-[400px] object-contain" />
+                                            ) : (
+                                                <div className="p-4 text-xs text-gray-500 text-center break-all">{selectedBooking.payment_receipt_path}</div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="p-3 rounded-lg bg-black text-xs text-gray-500 border border-white/5 text-center">Không có hình ảnh đính kèm</div>
+                                    )}
+                                </section>
+
                                 <section className="pt-4 border-t border-white/10 space-y-4">
                                     <div>
                                         <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">Cập nhật trạng thái</h4>
@@ -448,7 +479,7 @@ export default function AdminDashboard() {
                                         </div>
                                     </div>
                                     <div>
-                                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">Thông tin Xe & Tài xế</h4>
+                                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">Thông tin Xe & Tài xế {selectedBooking.needs === '2 chiều' ? '(Chiều Đi)' : ''}</h4>
                                         <div className="grid grid-cols-2 gap-3 mb-4">
                                             <div>
                                               <p className="text-[10px] text-gray-500 mb-1">Biển số xe</p>
@@ -470,6 +501,32 @@ export default function AdminDashboard() {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {selectedBooking.needs === '2 chiều' && (
+                                    <div>
+                                        <h4 className="text-xs font-bold text-orange-500/80 uppercase mb-2">Thông tin Xe & Tài xế (Chiều Về)</h4>
+                                        <div className="grid grid-cols-2 gap-3 mb-4">
+                                            <div>
+                                              <p className="text-[10px] text-gray-500 mb-1">Biển số xe (Về)</p>
+                                              <input 
+                                                  className="w-full bg-black border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                                  placeholder="VD: 30A-999.99"
+                                                  defaultValue={selectedBooking.return_license_plate || ""}
+                                                  onBlur={(e) => updateBooking(selectedBooking.id, { return_license_plate: e.target.value })}
+                                              />
+                                            </div>
+                                            <div>
+                                              <p className="text-[10px] text-gray-500 mb-1">Số điện thoại tài xế (Về)</p>
+                                              <input 
+                                                  className="w-full bg-black border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                                  placeholder="SĐT Tài xế..."
+                                                  defaultValue={selectedBooking.return_driver_phone || ""}
+                                                  onBlur={(e) => updateBooking(selectedBooking.id, { return_driver_phone: e.target.value })}
+                                              />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    )}
                                     <div>
                                         <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">Ghi chú nội bộ</h4>
                                         <textarea 

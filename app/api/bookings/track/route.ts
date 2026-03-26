@@ -21,7 +21,7 @@ export async function GET(request: Request) {
         `SELECT 
           id, customer_name, phone, booking_code, concert_name, 
           pickup_location, pickup_area, departure_time, concert_date,
-          status, license_plate, driver_phone, total_amount, car_type
+          status, license_plate, driver_phone, return_license_plate, return_driver_phone, total_amount, car_type
          FROM booking_requests 
          WHERE UPPER(booking_code) = ? OR phone LIKE ?
          ORDER BY id DESC LIMIT 5`,

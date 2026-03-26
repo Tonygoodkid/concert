@@ -39,6 +39,7 @@ export default function BookingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [receiptBase64, setReceiptBase64] = useState<string>("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   
   const [prices, setPrices] = useState(DEFAULT_PRICES);
@@ -113,9 +114,43 @@ export default function BookingPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          
+          const MAX_DIMENSION = 800;
+          if (width > height && width > MAX_DIMENSION) {
+            height *= MAX_DIMENSION / width;
+            width = MAX_DIMENSION;
+          } else if (height > MAX_DIMENSION) {
+            width *= MAX_DIMENSION / height;
+            height = MAX_DIMENSION;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          resolve(canvas.toDataURL("image/jpeg", 0.6));
+        };
+      };
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setReceiptFile(e.target.files[0]);
+      const base64 = await compressImage(e.target.files[0]);
+      setReceiptBase64(base64);
     }
   };
 
@@ -150,7 +185,7 @@ export default function BookingPage() {
         body: JSON.stringify({
           ...formData,
           total_amount: totalAmount,
-          payment_receipt_path: receiptFile.name, // In a real app, this would be the uploaded URL
+          payment_receipt_path: receiptBase64 || receiptFile.name,
           booking_code: bookingCode
         }),
       });

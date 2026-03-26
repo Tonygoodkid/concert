@@ -34,6 +34,8 @@ export async function GET() {
         booking_code TEXT,
         license_plate TEXT,
         driver_phone TEXT,
+        return_license_plate TEXT,
+        return_driver_phone TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `;
@@ -47,6 +49,12 @@ export async function GET() {
     } catch (e) {}
     try {
       await sql`ALTER TABLE booking_requests ADD COLUMN driver_phone TEXT`;
+    } catch (e) {}
+    try {
+      await sql`ALTER TABLE booking_requests ADD COLUMN return_license_plate TEXT`;
+    } catch (e) {}
+    try {
+      await sql`ALTER TABLE booking_requests ADD COLUMN return_driver_phone TEXT`;
     } catch (e) {}
 
     await sql`
