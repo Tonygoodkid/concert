@@ -34,15 +34,6 @@ export default function Footer() {
           © 2026 Concert Go. All Rights Reserved. Designed for concert lovers.
         </div>
       </div>
-      
-      {/* Sticky Mobile CTA */}
-      <div className="md:hidden fixed bottom-6 left-4 right-4 z-40">
-        <Link href="/booking">
-          <button className="w-full bg-primary text-white py-4 rounded-2xl text-lg font-bold shadow-2xl sticky-cta uppercase animate-bounce-subtle">
-            Đặt xe ngay
-          </button>
-        </Link>
-      </div>
     </footer>
   );
 }

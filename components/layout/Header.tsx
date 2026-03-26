@@ -15,8 +15,8 @@ export default function Header() {
             <Link href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">Cách đặt</Link>
             <Link href="/tracking" className="text-gray-300 hover:text-white transition-colors">Tra cứu đơn</Link>
           </nav>
-          <Link href="/booking">
-            <button className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-primary/90 transition-all">
+          <Link href="/booking" className="hidden md:block">
+            <button className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
               Đặt ngay
             </button>
           </Link>
