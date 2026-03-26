@@ -400,12 +400,7 @@ export default function BookingPage() {
                 </Select>
                 
                 <Select 
-                    label={
-                        <div>
-                            <span className="block text-sm font-semibold text-gray-300">Giờ về (Dự kiến)</span>
-                            <span className="block text-[10px] text-primary/80 mt-1 mb-2 font-normal italic">* Xe sẽ đợi tối đa 30p sau khi kết thúc concert</span>
-                        </div>
-                    }
+                    label="Giờ về (Dự kiến)"
                     name="return_time" 
                     value={formData.return_time} 
                     onChange={handleChange}
@@ -416,6 +411,9 @@ export default function BookingPage() {
                     <option value="kết thúc concert">kết thúc concert</option>
                 </Select>
               </div>
+              {!isReturnDisabled && (
+                <p className="text-[10px] text-primary/80 mt-2 ml-1 font-normal italic">* Đối với chiều về: Xe sẽ nổ máy và đợi tối đa 30p tính từ thời điểm kết thúc Concert.</p>
+              )}
             </CardContent>
           </Card>
 
