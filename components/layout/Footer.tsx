@@ -34,6 +34,20 @@ export default function Footer() {
           © 2026 Concert Go. All Rights Reserved. Designed for concert lovers.
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-xl border-t border-white/10 z-50 flex gap-3 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+        <Link href="/tracking" className="flex-1">
+          <button className="w-full h-12 bg-white/5 active:bg-white/10 text-white rounded-xl text-sm font-bold border border-white/10 flex items-center justify-center gap-2 transition-colors">
+            Tra cứu
+          </button>
+        </Link>
+        <Link href="/booking" className="flex-[2]">
+          <button className="w-full h-12 bg-primary active:bg-primary/80 text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 uppercase tracking-wide transition-colors">
+            Đặt xe ngay
+          </button>
+        </Link>
+      </div>
     </footer>
   );
 }
