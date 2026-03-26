@@ -13,7 +13,7 @@ export default function Header() {
           <nav className="hidden md:flex gap-8">
             <Link href="#benefits" className="text-gray-300 hover:text-white transition-colors">Lợi ích</Link>
             <Link href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">Cách đặt</Link>
-            <Link href="#faq" className="text-gray-300 hover:text-white transition-colors">Hỏi đáp</Link>
+            <Link href="/tracking" className="text-gray-300 hover:text-white transition-colors">Tra cứu đơn</Link>
           </nav>
           <Link href="/booking">
             <button className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-primary/90 transition-all">

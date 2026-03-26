@@ -43,6 +43,8 @@ class LocalDB {
         internal_notes TEXT,
         lead_source TEXT DEFAULT 'website',
         booking_code TEXT,
+        license_plate TEXT,
+        driver_phone TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
 

@@ -32,6 +32,8 @@ export async function GET() {
         internal_notes TEXT,
         lead_source TEXT DEFAULT 'website',
         booking_code TEXT,
+        license_plate TEXT,
+        driver_phone TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `;
@@ -39,9 +41,13 @@ export async function GET() {
     // Attempt to alter table if it already exists (Postgres)
     try {
       await sql`ALTER TABLE booking_requests ADD COLUMN booking_code TEXT`;
-    } catch (e) {
-      // Ignore if column already exists
-    }
+    } catch (e) {}
+    try {
+      await sql`ALTER TABLE booking_requests ADD COLUMN license_plate TEXT`;
+    } catch (e) {}
+    try {
+      await sql`ALTER TABLE booking_requests ADD COLUMN driver_phone TEXT`;
+    } catch (e) {}
 
     await sql`
       CREATE TABLE IF NOT EXISTS status_history (

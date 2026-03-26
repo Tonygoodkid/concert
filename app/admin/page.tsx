@@ -49,6 +49,8 @@ type Booking = {
   internal_notes: string;
   lead_source: string;
   booking_code: string;
+  license_plate: string;
+  driver_phone: string;
   created_at: string;
 };
 
@@ -443,6 +445,29 @@ export default function AdminDashboard() {
                                                     {status.toUpperCase()}
                                                 </button>
                                             ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">Thông tin Xe & Tài xế</h4>
+                                        <div className="grid grid-cols-2 gap-3 mb-4">
+                                            <div>
+                                              <p className="text-[10px] text-gray-500 mb-1">Biển số xe</p>
+                                              <input 
+                                                  className="w-full bg-black border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                                                  placeholder="VD: 30A-123.45"
+                                                  defaultValue={selectedBooking.license_plate}
+                                                  onBlur={(e) => updateBooking(selectedBooking.id, { license_plate: e.target.value })}
+                                              />
+                                            </div>
+                                            <div>
+                                              <p className="text-[10px] text-gray-500 mb-1">Số điện thoại tài xế</p>
+                                              <input 
+                                                  className="w-full bg-black border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                                                  placeholder="SĐT Tài xế..."
+                                                  defaultValue={selectedBooking.driver_phone}
+                                                  onBlur={(e) => updateBooking(selectedBooking.id, { driver_phone: e.target.value })}
+                                              />
+                                            </div>
                                         </div>
                                     </div>
                                     <div>
