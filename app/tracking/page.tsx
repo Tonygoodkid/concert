@@ -142,17 +142,20 @@ export default function TrackingPage() {
                          {booking.needs !== '1 chiều về' && (
                          <div>
                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2"><MapPin className="h-4 w-4"/> Đón khách</p>
-                            <p className="font-medium">{booking.pickup_location}</p>
-                            <p className="text-sm text-gray-400">{booking.pickup_area}</p>
+                            <p className="font-medium">{booking.pickup_location || booking.pickup_area}</p>
+                            {booking.pickup_location && <p className="text-sm text-gray-400">{booking.pickup_area}</p>}
                             <p className="mt-3 text-sm flex items-center gap-2 text-blue-300"><Clock className="h-4 w-4"/> {booking.departure_time} - {booking.concert_date}</p>
                          </div>
                          )}
                          <div className={cn("pt-4 md:pt-0 border-white/10", booking.needs !== '1 chiều về' ? "border-t md:border-t-0 md:border-l md:pl-6" : "")}>
                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2"><MapPin className="h-4 w-4"/> Sự kiện</p>
                             <p className="font-medium">{booking.concert_name}</p>
+                            {booking.needs === '1 chiều về' && (
+                              <p className="text-sm text-gray-400 mt-1">Đón tại: {booking.pickup_location || booking.pickup_area}</p>
+                            )}
                             <p className="mt-3 text-sm flex items-center gap-2 text-purple-300"><Car className="h-4 w-4"/> {booking.car_type.toUpperCase()}</p>
-                            {booking.needs !== '1 chiều đi' && (
-                              <p className="mt-2 text-sm flex items-center gap-2 text-orange-300"><Clock className="h-4 w-4"/> {booking.return_time} {booking.return_time !== 'kết thúc concert' ? `- ${booking.concert_date}` : ''}</p>
+                            {booking.needs !== '1 chiều đi' && booking.return_time && booking.return_time !== '-' && (
+                              <p className="mt-2 text-sm flex items-center gap-2 text-orange-300"><Clock className="h-4 w-4"/> {booking.return_time !== 'kết thúc concert' ? `${booking.return_time} - ${booking.concert_date}` : 'Kết thúc concert'}</p>
                             )}
                          </div>
                       </div>
