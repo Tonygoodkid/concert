@@ -85,7 +85,7 @@ export default function TrackingPage() {
         <div className="space-y-6 mb-12">
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tighter">Tra cứu chuyến đi</h1>
           <p className="text-gray-400 text-lg">
-            Khều thông tin tài xế và biển số xe của bạn bằng Mã đơn hàng hoặc Số điện thoại.
+            Kiểm tra thông tin đơn hàng, thông tin tài xế và biển số xe bằng Mã đơn hàng hoặc Số điện thoại.
           </p>
           
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 pt-4">

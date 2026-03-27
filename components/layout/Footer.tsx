@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-card border-t border-border mt-20 pb-24 md:pb-8">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Music className="h-6 w-6 text-primary" />
@@ -21,18 +21,11 @@ export default function Footer() {
               <p className="flex items-center gap-2"><Phone className="h-4 w-4" /> 0822 555 394</p>
               <p className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" /> 
-                <a href="https://zalo.me/0822555394" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition-colors">
-                  Zalo: 0822 555 394
+                <a href="https://zalo.me/0822555394" target="_blank" rel="noopener noreferrer" className="hover:text-white underline transition-colors text-blue-400">
+                  Zalo: 0822 555 394 ↗
                 </a>
               </p>
             </div>
-          </div>
-          <div>
-            <h4 className="text-white font-semibold mb-4 underline decoration-primary decoration-2 underline-offset-4">Hỗ trợ</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li><Link href="#faq" className="hover:text-white transition-colors">Điều khoản dịch vụ</Link></li>
-              <li><Link href="#faq" className="hover:text-white transition-colors">Chính sách bảo mật</Link></li>
-            </ul>
           </div>
         </div>
         <div className="border-t border-border/50 pt-8 text-center text-xs text-gray-500">
